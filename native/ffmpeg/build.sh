@@ -28,7 +28,7 @@ API=26
 HERE="$(cd "$(dirname "$0")" && pwd)"
 REPO="$(cd "$HERE/../.." && pwd)"
 WORK="${WORK:-$REPO/build/ffmpeg}"
-NDK="${ANDROID_NDK:-${LOCALAPPDATA:-/c/Users/$USER/AppData/Local}/Android/Sdk/ndk/27.0.12077973}"
+NDK="${ANDROID_NDK:-${LOCALAPPDATA:-/c/Users/${USERNAME:-user}/AppData/Local}/Android/Sdk/ndk/27.0.12077973}"
 NDK="$(cd "$NDK" && pwd)"
 case "$(uname -s)" in
     MINGW*|MSYS*|CYGWIN*) HOST=windows-x86_64; EXE=.exe ;;
