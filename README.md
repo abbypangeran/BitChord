@@ -19,7 +19,7 @@ The original private v1.9.29 build passed ONIX Alpha XI1 physical acceptance on 
 - Ordinary public YouTube tracks are expected to use token-free InnerTubeX profiles or the NewPipe fallback. This was not verified with live playback. Age-restricted and other token-dependent YouTube content may fail.
 - Local files and third-party addon playback use separate paths from the desktop PoToken integration.
 
-The separate [`bitperfect-validation` branch](https://github.com/abbypangeran/BitChord/tree/bitperfect-validation) contains the PCM null-test and its results at Java Sound's `SourceDataLine.write()` boundary. That result does not establish end-to-end bit-perfect delivery through Java Sound, CoreAudio, USB, the driver, or a DAC. This fork makes no hardware bit-perfect playback claim.
+The [`bitperfect-validation` publication branch](https://github.com/abbypangeran/BitChord/tree/bitperfect-validation) adds a PCM null-test at Java Sound's `SourceDataLine.write()` boundary: 65 lossless captures covered 14,818,810 samples with zero mismatches. That branch passes 373 desktop tests, 122 shared tests, and 42 shared UI tests. These checks do not establish end-to-end bit-perfect delivery through Java Sound, CoreAudio, USB, the driver, or a DAC. This fork makes no hardware bit-perfect playback claim.
 
 ## Limitations
 
