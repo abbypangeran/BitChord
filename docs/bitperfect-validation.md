@@ -43,9 +43,9 @@ Comparison by `tools/bitperfect/compare.py`: NumPy decode of the captured bytes 
 
 | Source format | Output format | Samples tested | Mismatches | Result |
 |---|---|---|---|---|
-| 24-bit / 44.1 kHz | PCM S24LE (production on ONIX) | 882,370 | 0 | EXACT |
-| 24-bit / 48 kHz | PCM S24LE (production on ONIX) | 960,370 | 0 | EXACT |
-| 24-bit / 96 kHz | PCM S24LE (production on ONIX) | 1,920,370 | 0 | EXACT |
+| 24-bit / 44.1 kHz | PCM S24LE (24-bit output path) | 882,370 | 0 | EXACT |
+| 24-bit / 48 kHz | PCM S24LE (24-bit output path) | 960,370 | 0 | EXACT |
+| 24-bit / 96 kHz | PCM S24LE (24-bit output path) | 1,920,370 | 0 | EXACT |
 | 24-bit / 44.1, 48, 96 kHz | PCM S32LE (`s24 << 8`, clean padding) | 3,763,110 | 0 | EXACT |
 | 24-bit / 44.1, 48, 96 kHz | FLOAT32LE (`s24 / 2^23`) | 3,763,110 | 0 | EXACT |
 | 16-bit / 44.1 kHz | PCM S16LE | 882,370 | 0 | EXACT |
@@ -58,7 +58,7 @@ Per-capture totals, exact-match percentage, max/RMS error in LSBs, and first-mis
 ### Differences between output formats
 
 - **S24, S32, float:** all lossless for 16- and 24-bit sources. Float is exact because 24-bit integers fit in a float's 24-bit significand; FFmpeg's S32/S16→FLT scaling is a power of two; `packPcm` multiplies by 2^(n−1) in `double` and `toLong()` gets an integer with nothing to truncate. +full-scale (`8388607/2^23 < 1`) does not clip, and −1.0 maps to `−limit` exactly.
-- **24-bit source → S16** (only when the user picks 16-bit output precision): `packPcm` **truncates toward zero** (`toLong()`), with no rounding or dither. Verified against all 15 files: matches `trunc(x/256)` exactly, not `floor` or round-to-nearest. Max error 255 (24-bit LSBs), i.e. under one 16-bit LSB; RMS ≈ 147 on wideband signals. Sub-256-LSB detail such as the ±1 LSB impulses disappears. Precision loss is inherent here, but truncation toward zero adds a small sign-dependent bias and correlated distortion that rounding plus TPDF dither would avoid. This is not a defect on the validated ONIX path, which runs at 24 bits.
+- **24-bit source → S16** (only when the user picks 16-bit output precision): `packPcm` **truncates toward zero** (`toLong()`), with no rounding or dither. Verified against all 15 files: matches `trunc(x/256)` exactly, not `floor` or round-to-nearest. Max error 255 (24-bit LSBs), i.e. under one 16-bit LSB; RMS ≈ 147 on wideband signals. Sub-256-LSB detail such as the ±1 LSB impulses disappears. Precision loss is inherent here, but truncation toward zero adds a small sign-dependent bias and correlated distortion that rounding plus TPDF dither would avoid. Selecting 24-bit output avoids this specific 16-bit truncation behavior; it does not establish DAC-wire accuracy.
 - **App volume below 100 %:** `DesktopAudioSink.gain` scales every sample digitally in `packPcm`, so playback is not bit-exact at any volume other than 1.0 (shown at 0.5: values halved and truncated).
 
 ## Defects
